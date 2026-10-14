@@ -23,6 +23,6 @@ public class Sandbox implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        salvarCartao();
+//        salvarCartao();
     }
 }
