@@ -6,8 +6,10 @@ import io.github.patrickbg.planeja.dominio.cartao.dto.CartaoDetalhes;
 import io.github.patrickbg.planeja.dominio.cartao.dto.CartaoForm;
 import io.github.patrickbg.planeja.dominio.cartao.mapper.CartaoMapper;
 import io.github.patrickbg.planeja.dominio.cartao.model.CartaoEntity;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -24,7 +26,7 @@ public class CartaoService {
     private CartaoMapper cartaoMapper;
 
     public CartaoDetalhes criar(CartaoForm form){
-        var result = cartaoValidator.validar(form);
+        var result = cartaoValidator.validar(form, null);
 
         if(result.isInvalido()){
             throw new ValidationException(result.getCamposInvalidos());
@@ -39,5 +41,16 @@ public class CartaoService {
         return cartaoRepository.findById(id)
                 .map(cartaoMapper::toDetalhes)
                 .orElseThrow(RegistroNaoEncontradoException::new);
+    }
+
+    @Transactional
+    public void atualizar(UUID id, @Valid CartaoForm dadosAtualizacao) {
+        var entity = cartaoRepository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        var result = cartaoValidator.validar(dadosAtualizacao, id);
+
+        if(result.isInvalido()){
+            throw new ValidationException(result.getCamposInvalidos());
+        }
+        cartaoMapper.update(entity, dadosAtualizacao);
     }
 }

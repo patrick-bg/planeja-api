@@ -6,6 +6,8 @@ import io.github.patrickbg.planeja.dominio.cartao.dto.CartaoForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class CartaoValidator {
 
@@ -13,10 +15,11 @@ public class CartaoValidator {
     private CartaoRepository cartaoRepository;
 
 
-    public ValidationResult validar (CartaoForm form){
+    public ValidationResult validar (CartaoForm form, UUID id){
         var result = ValidationResult.novo();
 
-        if(cartaoRepository.findByNome(form.nome()).isPresent()){
+        var isListNotEmpty = !cartaoRepository.findByNomeAndNotId(form.nome(),id).isEmpty();
+        if(isListNotEmpty){
             result.add(new CampoInvalido("nome", "Já cadastrado"));
         }
 
