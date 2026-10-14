@@ -1,5 +1,6 @@
 package io.github.patrickbg.planeja.infra.handlers;
 
+import io.github.patrickbg.planeja.common.exceptions.RegistroNaoEncontradoException;
 import io.github.patrickbg.planeja.common.exceptions.ValidationException;
 import io.github.patrickbg.planeja.common.validation.CampoInvalido;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity handleValidationException(ValidationException e){
+    public ResponseEntity<?> handleValidationException(ValidationException e){
         var status = HttpStatus.UNPROCESSABLE_CONTENT;
         var body = Map.of(
                 "timestamp", LocalDateTime.now(),
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+    public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
 
         var camposInvalidos = e.getFieldErrors().stream().map(
                 fieldError -> new CampoInvalido(fieldError.getField(), fieldError.getDefaultMessage())
@@ -41,5 +42,16 @@ public class GlobalExceptionHandler {
                 "camposInvalidos", camposInvalidos);
 
         return ResponseEntity.status(status).body(body);
+    }
+
+
+    @ExceptionHandler(RegistroNaoEncontradoException.class)
+    public ResponseEntity<?> handleRegistroNaoEncontradoException(RegistroNaoEncontradoException e){
+       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+               "timestamp", LocalDateTime.now(),
+               "status", HttpStatus.NOT_FOUND.value(),
+               "error", e.getMessage(),
+               "message", e.getMessage()
+       ));
     }
 }
