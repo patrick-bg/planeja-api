@@ -1,5 +1,6 @@
 package io.github.patrickbg.planeja.dominio.cartao;
 
+import io.github.patrickbg.planeja.common.exceptions.ValidationException;
 import io.github.patrickbg.planeja.dominio.cartao.dto.CartaoDetalhes;
 import io.github.patrickbg.planeja.dominio.cartao.dto.CartaoForm;
 import io.github.patrickbg.planeja.dominio.cartao.mapper.CartaoMapper;
@@ -20,7 +21,12 @@ public class CartaoService {
     private CartaoMapper cartaoMapper;
 
     public CartaoDetalhes criar(CartaoForm form){
-        cartaoValidator.validar(form);
+        var result = cartaoValidator.validar(form);
+
+        if(result.isInvalido()){
+            throw new ValidationException(result.getCamposInvalidos());
+        }
+
         CartaoEntity entity = cartaoMapper.toEntity(form);
         cartaoRepository.save(entity);
         return cartaoMapper.toDetalhes(entity);
