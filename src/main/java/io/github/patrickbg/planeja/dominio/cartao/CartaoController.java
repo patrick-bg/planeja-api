@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("cartoes")
+@CrossOrigin("*")
 public class CartaoController {
 
     @Autowired
@@ -34,5 +35,4 @@ public class CartaoController {
         cartaoService.atualizar(id, dadosAtualizacao);
         return ResponseEntity.noContent().build();
     }
-
 }
