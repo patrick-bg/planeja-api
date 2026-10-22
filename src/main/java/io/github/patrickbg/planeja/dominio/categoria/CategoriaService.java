@@ -5,6 +5,8 @@ import io.github.patrickbg.planeja.common.exceptions.ValidationException;
 import io.github.patrickbg.planeja.common.validation.ValidationResult;
 import io.github.patrickbg.planeja.dominio.categoria.dto.CategoriaDetalhes;
 import io.github.patrickbg.planeja.dominio.categoria.dto.CategoriaForm;
+import io.github.patrickbg.planeja.dominio.categoria.mapper.CategoriaMapper;
+import io.github.patrickbg.planeja.dominio.categoria.model.CategoriaEntity;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,6 @@ public class CategoriaService {
 
         CategoriaEntity entity = mapper.toEntity(nova);
         repository.save(entity);
-
         return mapper.toDetalhes(entity);
     }
 
