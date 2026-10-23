@@ -3,6 +3,8 @@ package io.github.patrickbg.planeja.dominio.lancamento.model;
 import io.github.patrickbg.planeja.dominio.cartao.model.CartaoEntity;
 import io.github.patrickbg.planeja.dominio.categoria.model.CategoriaEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,6 +12,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "lancamento")
+@Getter
+@Setter
 public class LancamentoEntity {
 
     @Id
