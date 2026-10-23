@@ -1,5 +1,6 @@
 package io.github.patrickbg.planeja.dominio.cartao;
 
+import io.github.patrickbg.planeja.dominio.cartao.dto.CartaoDetalhes;
 import io.github.patrickbg.planeja.dominio.cartao.model.CartaoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +22,5 @@ public interface CartaoRepository extends JpaRepository<CartaoEntity, UUID> {
             """)
     List<CartaoEntity> findByNomeAndNotId(@Param("nome") String nome, @Param("id") UUID id);
 
+    List<CartaoEntity> findByAtivoTrue();
 }
