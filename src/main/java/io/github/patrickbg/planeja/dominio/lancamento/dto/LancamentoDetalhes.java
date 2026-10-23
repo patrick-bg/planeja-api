@@ -11,6 +11,7 @@ public record LancamentoDetalhes(
         BigDecimal valor,
         TipoLancamento tipo,
         String categoriaId,
+        String categoriaNome,
         String cartaoId,
         String cartaoNome
 ) {
