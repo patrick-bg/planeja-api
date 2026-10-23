@@ -1,8 +1,14 @@
 package io.github.patrickbg.planeja.dominio.lancamento;
 
+import io.github.patrickbg.planeja.common.exceptions.ValidationException;
 import io.github.patrickbg.planeja.dominio.cartao.CartaoRepository;
+import io.github.patrickbg.planeja.dominio.cartao.model.CartaoEntity;
 import io.github.patrickbg.planeja.dominio.categoria.CategoriaRepository;
+import io.github.patrickbg.planeja.dominio.categoria.model.CategoriaEntity;
+import io.github.patrickbg.planeja.dominio.lancamento.dto.LancamentoDetalhes;
+import io.github.patrickbg.planeja.dominio.lancamento.dto.LancamentoForm;
 import io.github.patrickbg.planeja.dominio.lancamento.mapper.LancamentoMapper;
+import io.github.patrickbg.planeja.dominio.lancamento.model.LancamentoEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,5 +29,26 @@ public class LancamentoService {
 
     @Autowired
     private LancamentoMapper lancamentoMapper;
+
+    public LancamentoDetalhes criar (LancamentoForm form){
+        CategoriaEntity categoria = categoriaRepository.findById(form.categoriaId())
+                .orElse(null);
+
+        CartaoEntity cartao = null;
+        if(form.cartaoId() != null){
+            cartao = cartaoRepository.findById(form.cartaoId()).orElse(null);
+        }
+
+        var result = lancamentoValidator.validar(form, categoria, cartao);
+        if(result.isInvalido()){
+            throw new ValidationException(result.getCamposInvalidos());
+        }
+
+        LancamentoEntity entity = lancamentoMapper.toEntity(form,categoria,cartao);
+        lancamentoRepository.save(entity);
+
+        return lancamentoMapper.toDetalhes(entity);
+    }
+
 
 }
