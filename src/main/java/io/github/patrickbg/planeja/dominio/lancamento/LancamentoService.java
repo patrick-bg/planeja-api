@@ -74,7 +74,7 @@ public class LancamentoService {
         if(mes != null){
             spec = spec.and(mesEqual(mes));
         }
-        
+
         var resultado = lancamentoRepository.findAll(spec, pageRequest);
         return resultado.map(lancamentoMapper::toDetalhes);
     }
