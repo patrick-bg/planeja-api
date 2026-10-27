@@ -1,12 +1,29 @@
 package io.github.patrickbg.planeja.dominio.lancamento;
 
 import io.github.patrickbg.planeja.dominio.lancamento.model.LancamentoEntity;
+import io.github.patrickbg.planeja.dominio.lancamento.model.TipoLancamento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public interface LancamentoRepository extends JpaRepository<LancamentoEntity, UUID>,
         JpaSpecificationExecutor<LancamentoEntity> {
+
+    @Query("""
+        select sum (l.valor)
+            from LancamentoEntity as l
+            where l.tipo = :tipo
+            and l.data between :inicio and :fim
+""")
+    BigDecimal somaPorTipoNoPeriodo (
+            @Param("tipo") TipoLancamento tipo,
+            @Param("inicio") LocalDate dataInicio,
+            @Param("fim") LocalDate dataFim);
+
     
 }
