@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,4 +57,9 @@ public class CategoriaService {
     public List<CategoriaDetalhes> listarAtivas() {
         return repository.findByAtivoTrue().stream().map(mapper::toDetalhes).toList();
     }
+
+    public List<CategoriaDetalhes> listarTodas() {
+        return repository.findAll(Sort.by("nome")).stream().map(mapper::toDetalhes).toList();
+    }
+
 }
