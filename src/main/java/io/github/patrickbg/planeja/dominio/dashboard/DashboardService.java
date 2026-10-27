@@ -31,7 +31,11 @@ public class DashboardService {
 
         ResumoFinanceiro resumoFinanceiro = new ResumoFinanceiro(receitas, despesas, saldo);
 
-        List<DespesaCategoriaResumo> despesasPorCategoria = null;
+        List<DespesaCategoriaResumo> despesasPorCategoria = lancamentoRepository.somaPorCategoriaNoPeriodo(TipoLancamento.DESPESA, primeiroDiaMes, ultimoDiaMes)
+                .stream().map( resultado -> new DespesaCategoriaResumo(
+                        (String)resultado[0],
+                        (BigDecimal) resultado[1]))
+                .toList();
 
         return new Dashboard(mesAtual.toString(), resumoFinanceiro, despesasPorCategoria);
     }

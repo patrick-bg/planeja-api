@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public interface LancamentoRepository extends JpaRepository<LancamentoEntity, UUID>,
@@ -23,7 +24,22 @@ public interface LancamentoRepository extends JpaRepository<LancamentoEntity, UU
     BigDecimal somaPorTipoNoPeriodo (
             @Param("tipo") TipoLancamento tipo,
             @Param("inicio") LocalDate dataInicio,
-            @Param("fim") LocalDate dataFim);
+            @Param("fim") LocalDate dataFim
+    );
+
+    @Query("""
+        select l.categoria.nome, sum(l.valor)
+            from LancamentoEntity as l
+            where l.tipo = :tipo
+            and l.data between :inicio and :fim
+            group by l.categoria.nome
+            order by sum(l.valor) desc
+""")
+    List<Object[]> somaPorCategoriaNoPeriodo(
+            @Param("tipo") TipoLancamento tipo,
+            @Param("inicio") LocalDate dataInicio,
+            @Param("fim") LocalDate dataFim
+    );
 
     
 }
