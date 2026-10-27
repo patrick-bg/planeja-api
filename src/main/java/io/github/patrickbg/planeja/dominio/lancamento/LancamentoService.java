@@ -1,5 +1,6 @@
 package io.github.patrickbg.planeja.dominio.lancamento;
 
+import io.github.patrickbg.planeja.common.exceptions.RegistroNaoEncontradoException;
 import io.github.patrickbg.planeja.common.exceptions.ValidationException;
 import io.github.patrickbg.planeja.dominio.cartao.CartaoRepository;
 import io.github.patrickbg.planeja.dominio.cartao.model.CartaoEntity;
@@ -77,5 +78,10 @@ public class LancamentoService {
 
         var resultado = lancamentoRepository.findAll(spec, pageRequest);
         return resultado.map(lancamentoMapper::toDetalhes);
+    }
+
+    public void deletar (UUID id){
+        var lancamento = lancamentoRepository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        lancamentoRepository.delete(lancamento);
     }
 }
