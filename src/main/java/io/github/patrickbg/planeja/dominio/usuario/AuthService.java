@@ -7,6 +7,7 @@ import io.github.patrickbg.planeja.dominio.usuario.dto.AuthResponse;
 import io.github.patrickbg.planeja.dominio.usuario.dto.LoginForm;
 import io.github.patrickbg.planeja.dominio.usuario.dto.UsuarioCadastroForm;
 import io.github.patrickbg.planeja.dominio.usuario.model.UsuarioEntity;
+import io.github.patrickbg.planeja.infra.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class AuthService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private JwtService jwtService;
 
     public AuthResponse cadastrar(UsuarioCadastroForm form){
 
@@ -55,10 +59,12 @@ public class AuthService {
     }
 
     private AuthResponse toAuthResponse(UsuarioEntity usuario){
+        var token = jwtService.generateToken(usuario);
+        var expiraEm = jwtService.getExpirationSeconds();
         return new AuthResponse(
-                null,
+                token,
                 "Bearer",
-                0,
+                expiraEm,
                 usuario.getNome()
         );
     }
