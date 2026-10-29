@@ -1,6 +1,7 @@
 package io.github.patrickbg.planeja.infra.security;
 
 import io.github.patrickbg.planeja.dominio.usuario.model.UsuarioEntity;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,21 +19,18 @@ public class JwtService {
     @Value("${app.jwt.secret}")
     private String secret;
 
+    @Getter
     @Value("${app.jwt.expiration-seconds}")
     private long expirationSeconds;
 
-    public long getExpirationSeconds() {
-        return expirationSeconds;
-    }
-
-    public String generateToken(UsuarioEntity usuario) {
+    public String gerarToken(UsuarioEntity usuario) {
         long expiration = Instant.now().plusSeconds(expirationSeconds).getEpochSecond();
         String header = base64Url("""
-                { "alg": "HS256, "typ": "JWT" }
+                { "alg": "HS256", "typ": "JWT" }
                 """);
 
         String payload = base64Url("""
-                        { "sub": "%s", "nome": "%s", "exp": "%d"
+                        { "sub": "%s", "nome": "%s", "exp": "%d"}
                 
                 """.formatted(usuario.getId().toString(), usuario.getNome(), expiration));
 
@@ -47,8 +45,8 @@ public class JwtService {
             byte[] key = secret.getBytes(StandardCharsets.UTF_8);
             SecretKeySpec privateKey = new SecretKeySpec(key, ALGORITMO);
             mac.init(privateKey);
-            var publickey = mac.doFinal(header.getBytes(StandardCharsets.UTF_8));
-            return Base64.getUrlEncoder().withoutPadding().encodeToString(publickey);
+            byte[] publicKey = mac.doFinal(header.getBytes(StandardCharsets.UTF_8));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(publicKey);
         } catch (Exception e) {
             throw new IllegalStateException("Erro ao gerar o JWT.", e);
         }

@@ -21,14 +21,13 @@ public class AuthService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
     @Autowired
     private JwtService jwtService;
 
     public AuthResponse cadastrar(UsuarioCadastroForm form){
 
         if(usuarioRepository.existsByLogin(form.login())){
-            throw new ValidationException(List.of(new CampoInvalido("login","Login já cadastrado.")));
+            throw new ValidationException(List.of(new CampoInvalido("login", "Login já cadastrado.")));
         }
 
         String senhaCriptografada = encoder.encode(form.senha());
@@ -43,9 +42,8 @@ public class AuthService {
         return toAuthResponse(usuario);
     }
 
-    public AuthResponse autenticar (LoginForm form){
-        final String mensagem = "Login ou senha inválidos";
-
+    public AuthResponse autenticar(LoginForm form){
+        final String mensagem = "Login ou senha inválidos.";
         UsuarioEntity usuario = usuarioRepository.findByLogin(form.login())
                 .orElseThrow(() -> new UnauthorizedException(mensagem));
 
@@ -59,8 +57,9 @@ public class AuthService {
     }
 
     private AuthResponse toAuthResponse(UsuarioEntity usuario){
-        var token = jwtService.generateToken(usuario);
+        var token = jwtService.gerarToken(usuario);
         var expiraEm = jwtService.getExpirationSeconds();
+
         return new AuthResponse(
                 token,
                 "Bearer",
@@ -68,6 +67,4 @@ public class AuthService {
                 usuario.getNome()
         );
     }
-
-
 }

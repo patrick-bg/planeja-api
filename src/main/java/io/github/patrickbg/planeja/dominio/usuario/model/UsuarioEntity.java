@@ -14,7 +14,7 @@ public class UsuarioEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "login", nullable = false)
+    @Column(name = "login", unique = true, nullable = false)
     private String login;
 
     @Column(name = "senha", nullable = false)
