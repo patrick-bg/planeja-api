@@ -57,4 +57,11 @@ public class JwtService {
     }
 
 
+    public boolean isTokenValido(String token) {
+        return false;
+    }
+    
+    public UsuarioEntity getUsuario(String token) {
+        return null;
+    }
 }
